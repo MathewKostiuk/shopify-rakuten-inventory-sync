@@ -35,7 +35,6 @@ export default function FileUploader() {
         body: data,
       }
       const response = await fetch(endpoint, options);
-      console.log(data.values(), options, response);
     }}
   >
     Process CSV File

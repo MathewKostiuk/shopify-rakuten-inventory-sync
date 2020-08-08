@@ -9,7 +9,7 @@ const session = require('koa-session');
 const koaBody = require('koa-body');
 const csvParser = require('csv-parser');
 const fs = require('fs');
-const { Readable } = require("stream")
+const Products = require('./models/products');
 
 dotenv.config();
 const { default: graphQLProxy } = require('@shopify/koa-shopify-graphql-proxy');
@@ -56,7 +56,7 @@ app.prepare().then(() => {
         }
       })
       .on('end', () => {
-        console.log(results);
+        Products.insertProducts(results);
         ctx.res.statusCode = 200;
       })
       .on('error', (error) => console.log(error))
