@@ -7,8 +7,6 @@ const { default: createShopifyAuth } = require('@shopify/koa-shopify-auth');
 const { verifyRequest } = require('@shopify/koa-shopify-auth');
 const session = require('koa-session');
 const koaBody = require('koa-body');
-const csvParser = require('csv-parser');
-const fs = require('fs');
 const Products = require('./models/products');
 
 dotenv.config();
@@ -46,20 +44,9 @@ app.prepare().then(() => {
   );
 
   router.post('/csv', koaBody({ multipart: true, formLimit: 400000 }), async (ctx, next) => {
-    const results = [];
     ctx.body = ctx.request.files.csv.path;
-    fs.createReadStream(ctx.body)
-      .pipe(csvParser())
-      .on('data', (data) => {
-        if (data.Stock !== '') {
-          results.push(data) 
-        }
-      })
-      .on('end', () => {
-        Products.insertProducts(results);
-        ctx.res.statusCode = 200;
-      })
-      .on('error', (error) => console.log(error))
+    await Products.processCSV(ctx.body);
+    ctx.res.statusCode = 200;
   });
 
   server.use(router.routes());
@@ -73,8 +60,6 @@ app.prepare().then(() => {
     ctx.res.statusCode = 200;
     return await next();
   });
-
-
 
   server.listen(port, () => {
     console.log(`> Ready on http://localhost:${port}`);

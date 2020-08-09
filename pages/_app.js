@@ -5,13 +5,13 @@ import { Provider } from '@shopify/app-bridge-react';
 import '@shopify/polaris/dist/styles.css';
 import translations from '@shopify/polaris/locales/en.json';
 import Cookies from 'js-cookie';
-import ApolloClient from 'apollo-boost';
-import { ApolloProvider } from 'react-apollo';
+import { ApolloProvider, ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
+
+const httpLink = new HttpLink({ uri: '/graphql', credentials: 'include' });
 
 const client = new ApolloClient({
-  fetchOptions: {
-    credentials: 'include'
-  },
+  link: httpLink,
+  cache: new InMemoryCache(),
 });
 
 class MyApp extends App {

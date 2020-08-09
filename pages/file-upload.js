@@ -1,9 +1,7 @@
 import {
-  Heading,
   Card,
   Layout,
   Page,
-  TextStyle,
   Stack,
   TextContainer,
 } from '@shopify/polaris';
@@ -12,7 +10,6 @@ import FileUploader from '../components/FileUploader';
 class FileUpload extends React.Component {
 
   render() {
-
     return (
       <Page>
         <Layout>

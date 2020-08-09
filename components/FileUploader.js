@@ -8,9 +8,12 @@ import {
   Button,
 } from '@shopify/polaris';
 
+import BulkOperationProducts from './BulkOperationProducts';
+
 export default function FileUploader() {
   const [files, setFiles] = React.useState([]);
   const [rejectedFiles, setRejectedFiles] = React.useState([]);
+  const [fetching, setFetching] = React.useState(false);
   const hasError = rejectedFiles.length > 0;
   const imageURL = 'https://cdn.shopify.com/s/files/1/0757/9955/files/New_Post.png?12678548500147524304';
 
@@ -34,7 +37,8 @@ export default function FileUploader() {
         mode: 'same-origin',
         body: data,
       }
-      const response = await fetch(endpoint, options);
+      await fetch(endpoint, options);
+      setFetching(true);
     }}
   >
     Process CSV File
@@ -75,6 +79,10 @@ export default function FileUploader() {
     </Banner>
   );
 
+  const fetchingMessage = fetching && (
+    <BulkOperationProducts fetching={fetching} />
+  );
+
   return (
     <Stack vertical>
       {errorMessage}
@@ -88,7 +96,12 @@ export default function FileUploader() {
         {fileUpload}
         {uploadedFiles}
       </DropZone>
-      {processCSV}
+      <Stack.Item>
+        {processCSV}
+      </Stack.Item>
+      <Stack.Item>
+        {fetchingMessage}
+      </Stack.Item>
     </Stack>
   );
 }
