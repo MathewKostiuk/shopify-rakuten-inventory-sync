@@ -50,8 +50,12 @@ app.prepare().then(() => {
   });
 
   router.post('/inventory', koaBody(), async (ctx, next) => {
-    ctx.body = ctx.request.body;
-    await Products.downloadJsonL(ctx.body);
+    const parsedJSON = await Products.downloadJsonL(ctx.request.body).catch(e => console.log(e));
+    const updatedProducts = await Promise.all(parsedJSON.map(async item => {
+      const updated = await Products.updateRakutenProducts(item);
+      return [...updated];
+    }));
+    ctx.body = updatedProducts;
     ctx.res.statusCode = 200;
   });
 

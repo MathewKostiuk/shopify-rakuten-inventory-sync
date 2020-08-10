@@ -22,21 +22,22 @@ async function deleteAllProducts() {
 async function processCSV(csv) {
   const results = [];
   fs.createReadStream(csv)
-  .pipe(csvParser())
-  .on('data', (data) => {
-    if (data.Stock !== '') {
-      results.push(data) ;
-    }
-  })
-  .on('end', async () => {
-    await deleteAllProducts();
-    await insertProducts(results);
-  })
-  .on('error', (error) => Promise.reject(error));
+    .pipe(csvParser())
+    .on('data', (data) => {
+      if (data.Stock !== '') {
+        results.push(data);
+      }
+    })
+    .on('end', async () => {
+      await deleteAllProducts();
+      await insertProducts(results);
+    })
+    .on('error', (error) => Promise.reject(error));
 }
 
 async function downloadJsonL(url) {
   const response = await fetch(url);
+  const parsedJSON = [];
 
   const rl = readline.createInterface({
     input: response.body,
@@ -45,14 +46,12 @@ async function downloadJsonL(url) {
 
   for await (const line of rl) {
     const json = JSON.parse(line);
-    // Each line in input.txt will be successively available here as `line`.
-    if (json.inventoryItem) {
-      const rakutenMapping = assignOptionValues(json);
-      if (rakutenMapping.rakuten_id) {
-        await updateRakutenProducts(rakutenMapping);
-      }
+
+    if (json.inventoryItem && json.sku) {
+      parsedJSON.push(assignOptionValues(json));
     }
   }
+  return parsedJSON;
 }
 
 function assignOptionValues(json) {
@@ -62,11 +61,11 @@ function assignOptionValues(json) {
     option_2: json.selectedOptions[1] && json.selectedOptions[1].name || '',
     shopify_inventory_item_id: json.inventoryItem.id,
   } : {
-    rakuten_id: json.sku,
-    option_1: '',
-    option_2: '',
-    shopify_inventory_item_id: json.inventoryItem.id,
-  };
+      rakuten_id: json.sku,
+      option_1: '',
+      option_2: '',
+      shopify_inventory_item_id: json.inventoryItem.id,
+    };
 }
 
 async function updateRakutenProducts(rakutenJSON) {
@@ -76,13 +75,13 @@ async function updateRakutenProducts(rakutenJSON) {
     option_2: rakutenJSON.option_2,
   }).update({
     shopify_inventory_item_id: rakutenJSON.shopify_inventory_item_id,
-  });
+  }, ['stock', 'shopify_inventory_item_id']);
 }
-
 
 module.exports = {
   insertProducts,
   deleteAllProducts,
   processCSV,
   downloadJsonL,
+  updateRakutenProducts,
 };

@@ -57,21 +57,27 @@ const GET_ALL_PRODUCTS_BULK_OPERATION = gql`
 
 export default function BulkOperationProducts() {
   const [called, setCalled] = React.useState(false);
+  const [fetchingInventory, setFetchingInventory] = React.useState(false);
+  const [productsToUpdate, setProductsToUpdate] = React.useState([]);
   const [getProductsQuery, {
     loading,
     error,
     data,
     stopPolling
   }] = useLazyQuery(GET_ALL_PRODUCTS_BULK_OPERATION, {
-    pollInterval: 10000,
+    pollInterval: 7000,
   });
 
   const [getProductsMutation, {
     loading: mutationLoading,
     error: mutationError,
   }] = useMutation(BULK_OPERATION_PRODUCT_INFO);
-  console.log(data);
-  if (data && data.currentBulkOperation && data.currentBulkOperation.status === 'COMPLETED') {
+
+  if (data
+    && data.currentBulkOperation
+    && data.currentBulkOperation.status === 'COMPLETED'
+    && fetchingInventory === false) {
+    setFetchingInventory(true)
     stopPolling();
     const endpoint = `/inventory`;
     const options = {
@@ -80,7 +86,8 @@ export default function BulkOperationProducts() {
       body: data.currentBulkOperation.url,
     }
     fetch(endpoint, options)
-      .then(response => console.log(response));
+      .then(response => response.json())
+      .then(json => setProductsToUpdate(productsToUpdate => [...productsToUpdate, ...json]));
   }
 
   React.useEffect(() => {
@@ -89,7 +96,7 @@ export default function BulkOperationProducts() {
       setCalled(true);
       getProductsQuery();
     }
-  }, [called, data]);
+  }, [productsToUpdate]);
 
   return (
     <div>
