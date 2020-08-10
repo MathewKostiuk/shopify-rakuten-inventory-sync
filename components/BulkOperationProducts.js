@@ -70,10 +70,17 @@ export default function BulkOperationProducts() {
     loading: mutationLoading,
     error: mutationError,
   }] = useMutation(BULK_OPERATION_PRODUCT_INFO);
-
-  if (data && data.currentBulkOperation.status === 'COMPLETED') {
+  console.log(data);
+  if (data && data.currentBulkOperation && data.currentBulkOperation.status === 'COMPLETED') {
     stopPolling();
-    console.log(data.currentBulkOperation.url);
+    const endpoint = `/inventory`;
+    const options = {
+      method: 'POST',
+      mode: 'same-origin',
+      body: data.currentBulkOperation.url,
+    }
+    fetch(endpoint, options)
+      .then(response => console.log(response));
   }
 
   React.useEffect(() => {
@@ -82,7 +89,7 @@ export default function BulkOperationProducts() {
       setCalled(true);
       getProductsQuery();
     }
-  }, [called]);
+  }, [called, data]);
 
   return (
     <div>

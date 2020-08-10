@@ -49,6 +49,12 @@ app.prepare().then(() => {
     ctx.res.statusCode = 200;
   });
 
+  router.post('/inventory', koaBody(), async (ctx, next) => {
+    ctx.body = ctx.request.body;
+    await Products.downloadJsonL(ctx.body);
+    ctx.res.statusCode = 200;
+  });
+
   server.use(router.routes());
   server.use(router.allowedMethods());
   
