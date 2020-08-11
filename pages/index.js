@@ -15,7 +15,7 @@ class Index extends React.Component {
       const redirect = Redirect.create(app);
       redirect.dispatch(
         Redirect.Action.APP,
-        '/file-upload',
+        '/update-inventory',
       );
     };
 

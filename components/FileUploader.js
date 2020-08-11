@@ -8,15 +8,13 @@ import {
   Button,
 } from '@shopify/polaris';
 
-import BulkOperationProducts from './BulkOperationProducts';
-
-export default function FileUploader() {
+export default function FileUploader(props) {
+  const { setFetched } = props;
+  const imageURL = 'https://cdn.shopify.com/s/files/1/0757/9955/files/New_Post.png?12678548500147524304';
   const [files, setFiles] = React.useState([]);
   const [rejectedFiles, setRejectedFiles] = React.useState([]);
-  const [fetching, setFetching] = React.useState(false);
   const hasError = rejectedFiles.length > 0;
-  const imageURL = 'https://cdn.shopify.com/s/files/1/0757/9955/files/New_Post.png?12678548500147524304';
-
+  
   const handleDropZoneDrop = React.useCallback(
     (_dropFiles, acceptedFiles, rejectedFiles) => {
       setFiles((files) => [...files, ...acceptedFiles]);
@@ -25,24 +23,20 @@ export default function FileUploader() {
     [],
   );
 
+  const handleCSVUpload = async () => {
+    const data = new FormData()
+    data.append('csv', files[0]);
+    const endpoint = `/csv`;
+    const options = {
+      method: 'POST',
+      mode: 'same-origin',
+      body: data,
+    }
+    await fetch(endpoint, options);
+    setFetched(() => true);
+  }
+
   const fileUpload = !files.length && <DropZone.FileUpload />;
-  const processCSV = files.length && <Button
-    primary
-    onClick={async () => {
-      const data = new FormData()
-      data.append('csv', files[0]);
-      const endpoint = `/csv`;
-      const options = {
-        method: 'POST',
-        mode: 'same-origin',
-        body: data,
-      }
-      await fetch(endpoint, options);
-      setFetching(true);
-    }}
-  >
-    Process CSV File
-  </Button>
 
   const uploadedFiles = files.length > 0 && (
     <Stack vertical>
@@ -79,10 +73,6 @@ export default function FileUploader() {
     </Banner>
   );
 
-  const fetchingMessage = fetching && (
-    <BulkOperationProducts fetching={fetching} />
-  );
-
   return (
     <Stack vertical>
       {errorMessage}
@@ -97,10 +87,13 @@ export default function FileUploader() {
         {uploadedFiles}
       </DropZone>
       <Stack.Item>
-        {processCSV}
-      </Stack.Item>
-      <Stack.Item>
-        {fetchingMessage}
+        {files.length > 0 &&
+          <Button
+          primary
+          onClick={handleCSVUpload} >
+            Update Inventory
+          </Button>
+        }
       </Stack.Item>
     </Stack>
   );

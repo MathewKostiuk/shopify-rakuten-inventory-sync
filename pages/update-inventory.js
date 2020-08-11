@@ -5,7 +5,7 @@ import {
   Stack,
   TextContainer,
 } from '@shopify/polaris';
-import FileUploader from '../components/FileUploader';
+import UpdateInventory from '../components/UpdateInventory';
 
 class FileUpload extends React.Component {
 
@@ -27,7 +27,7 @@ class FileUpload extends React.Component {
                   </TextContainer>
                 </Stack.Item>
                 <Stack.Item>
-                  <FileUploader />
+                  <UpdateInventory />
                 </Stack.Item>
               </Stack>
             </Card>
