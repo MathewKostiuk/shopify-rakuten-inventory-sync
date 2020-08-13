@@ -5,7 +5,8 @@ exports.up = knex => {
     table.string('rakuten_id').notNullable();
     table.string('option_1');
     table.string('option_2');
-    table.integer('stock');
+    table.integer('rakuten_stock');
+    table.integer('shopify_stock');
     table.string('shopify_inventory_item_id');
   })
 }
