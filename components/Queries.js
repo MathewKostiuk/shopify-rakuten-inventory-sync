@@ -1,50 +1,74 @@
-import BulkOperation from './BulkOperation';
-import GetLocationID from './GetLocationID';
+import React, { useState, useCallback } from 'react';
 
+import BulkOperation from './BulkOperation';
+import AdjustInventory from './AdjustInventory';
 import { BULK_OPERATION_PRODUCT_INFO } from '../queries';
 
-export default function Queries(props) {
-  const {
-    fetched,
-  } = props;
-  
-  const [locationID, setLocationID] = React.useState(null);
-  const [products, setProducts] = React.useState([]);
+export default function Queries() {
+  const [products, setProducts] = useState([]);
 
-  const onProductBulkActionComplete = (data, stopPolling) => {
-    if (data.currentBulkOperation.status !== 'COMPLETED') {
-      return;
+  const breakDownArray = (array) => {
+    const numberOfArraysNeeded = Math.ceil((array.length / 100));
+    const result = [];
+    let index = 0;
+    for (let i = 0; i < numberOfArraysNeeded; i++) {
+      const newArray = [];
+      for (let j = index; j < index + 100; j++) {
+        if (array[j] !== undefined) {
+          newArray.push(array[j]);
+        }
+      }
+      result.push(newArray);
+      index = index + 100;
     }
-
-    stopPolling();
-    const endpoint = `/product-info`;
-    const options = {
-      method: 'POST',
-      mode: 'same-origin',
-      body: data.currentBulkOperation.url,
-    }
-    fetch(endpoint, options)
-    .then(response => response.json())
-    .then(json => setProducts(products => [...products, ...json]));
+    return result;
   }
 
-  const locationIDQuery = !fetched && (
-    <GetLocationID 
-      setLocationID={setLocationID}
-    />
+  const onProductBulkActionComplete = useCallback(
+    (data, stopPolling) => {
+      if (!data || !data.currentBulkOperation || data.currentBulkOperation.status !== 'COMPLETED') {
+        return;
+      }
+
+      stopPolling();
+      const endpoint = `/product-info`;
+      const options = {
+        method: 'POST',
+        mode: 'same-origin',
+        body: data.currentBulkOperation.url,
+      }
+      fetch(endpoint, options)
+        .then(response => response.json())
+        .then(json => {
+          const brokenDownArray = breakDownArray(json);
+          return setProducts(brokenDownArray);
+        });
+    },
+    [],
   );
 
-  const productBulkOperation = fetched && (
-    <BulkOperation 
+  const productBulkOperation = products.length === 0 && (
+    <BulkOperation
       mutation={BULK_OPERATION_PRODUCT_INFO}
       onBulkOperationComplete={onProductBulkActionComplete}
     />
   );
 
+  const adjustInventory = products.length > 0 && (
+    <>
+      {products.map((batch, index) => {
+        return <AdjustInventory
+          inventoryItemAdjustments={batch}
+          key={index}
+        />
+      })}
+    </>
+  );
+
   return (
-    <div>
-      {locationIDQuery}
+    <>
       {productBulkOperation}
-    </div>
+      {adjustInventory}
+    </>
   )
 }

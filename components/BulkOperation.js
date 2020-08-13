@@ -1,5 +1,8 @@
-import { useMutation } from '@apollo/client';
+import React, { useEffect } from 'react';
+
 import CheckBulkOperationStatus from './CheckBulkOperationStatus';
+
+import { useMutation } from '@apollo/client';
 
 export default function BulkOperation(props) {
   const {
@@ -7,21 +10,18 @@ export default function BulkOperation(props) {
     onBulkOperationComplete,
   } = props;
 
-  const [called, setCalled] = React.useState(false);
-
   const [bulkOperationQuery, {
     loading,
     error,
   }] = useMutation(mutation);
 
-  if (!called) {
+  useEffect(() => {
     bulkOperationQuery();
-    setCalled(() => true);
-  }
-  
+  }, []);
+
   return (
     <CheckBulkOperationStatus
-    onBulkOperationComplete={onBulkOperationComplete}
+      onBulkOperationComplete={onBulkOperationComplete}
     />
   )
 }

@@ -1,3 +1,5 @@
+import React, { useCallback } from 'react';
+
 import {
   Stack,
   DropZone,
@@ -14,16 +16,15 @@ export default function FileUploader(props) {
   const [files, setFiles] = React.useState([]);
   const [rejectedFiles, setRejectedFiles] = React.useState([]);
   const hasError = rejectedFiles.length > 0;
-  
-  const handleDropZoneDrop = React.useCallback(
-    (_dropFiles, acceptedFiles, rejectedFiles) => {
-      setFiles((files) => [...files, ...acceptedFiles]);
-      setRejectedFiles(rejectedFiles);
-    },
+
+  const handleDropZoneDrop = useCallback((_dropFiles, acceptedFiles, rejectedFiles) => {
+    setFiles((files) => [...files, ...acceptedFiles]);
+    setRejectedFiles(rejectedFiles);
+  },
     [],
   );
 
-  const handleCSVUpload = async () => {
+  const handleCSVUpload = useCallback(async () => {
     const data = new FormData()
     data.append('csv', files[0]);
     const endpoint = `/csv`;
@@ -34,7 +35,9 @@ export default function FileUploader(props) {
     }
     await fetch(endpoint, options);
     setFetched(() => true);
-  }
+  },
+    [files],
+  );
 
   const fileUpload = !files.length && <DropZone.FileUpload />;
 
@@ -89,8 +92,8 @@ export default function FileUploader(props) {
       <Stack.Item>
         {files.length > 0 &&
           <Button
-          primary
-          onClick={handleCSVUpload} >
+            primary
+            onClick={handleCSVUpload} >
             Update Inventory
           </Button>
         }
