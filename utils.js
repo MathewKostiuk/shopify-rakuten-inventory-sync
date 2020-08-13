@@ -21,16 +21,23 @@ const assignOptionValues = (json) => {
     rakuten_id: json.sku,
     option_1: json.selectedOptions[0].name || '',
     option_2: json.selectedOptions[1] && json.selectedOptions[1].name || '',
+    shopify_stock: json.inventoryItem.inventoryLevel.available,
     shopify_inventory_item_id: json.inventoryItem.id,
   } : {
       rakuten_id: json.sku,
       option_1: '',
       option_2: '',
+      shopify_stock: json.inventoryItem.inventoryLevel.available,
       shopify_inventory_item_id: json.inventoryItem.id,
     };
+}
+
+const calculateAvailableDelta = (rakuten_stock, shopify_stock) => {
+  return rakuten_stock - shopify_stock;
 }
 
 module.exports = {
   downloadJsonL,
   assignOptionValues,
+  calculateAvailableDelta,
 }

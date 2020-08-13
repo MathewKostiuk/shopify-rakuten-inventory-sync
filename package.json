@@ -34,5 +34,8 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "store-js": "^2.0.4"
+  },
+  "devDependencies": {
+    "eslint-plugin-react-hooks": "^4.0.8"
   }
 }

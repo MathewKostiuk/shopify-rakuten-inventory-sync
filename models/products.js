@@ -8,7 +8,7 @@ async function insertProducts(products) {
       rakuten_id: product.Lot,
       option_1: product.SIZE,
       option_2: product.COLOR,
-      stock: product.Stock,
+      rakuten_stock: product.Stock,
     });
   }));
 }
@@ -34,13 +34,16 @@ async function processCSV(csv) {
 }
 
 async function updateRakutenProducts(rakutenJSON) {
-  return await knex('rakuten_products').where({
+  const updated = await knex('rakuten_products').where({
     rakuten_id: rakutenJSON.rakuten_id,
     option_1: rakutenJSON.option_1,
     option_2: rakutenJSON.option_2,
   }).update({
     shopify_inventory_item_id: rakutenJSON.shopify_inventory_item_id,
-  }, ['stock', 'shopify_inventory_item_id']);
+    shopify_stock: rakutenJSON.shopify_stock,
+  }, ['rakuten_stock', 'shopify_stock', 'shopify_inventory_item_id']);
+  
+  return updated;
 }
 
 module.exports = {
