@@ -11,7 +11,9 @@ const httpLink = new HttpLink({ uri: '/graphql', credentials: 'include' });
 
 const client = new ApolloClient({
   link: httpLink,
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    resultCaching: false,
+  }),
 });
 
 class MyApp extends App {
