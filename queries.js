@@ -43,7 +43,7 @@ mutation {
                   id
                   inventoryItem {
                     id
-                    inventoryLevel(locationId: "gid://shopify/Location/43559682093") {
+                    inventoryLevel(locationId: "gid://shopify/Location/47667675295") {
                       id
                       available
                     }
