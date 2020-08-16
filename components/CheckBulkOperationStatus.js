@@ -14,12 +14,20 @@ export default function CheckBulkOperationStatus(props) {
     error,
     stopPolling,
   } = useQuery(CHECK_BULK_OPERATION, {
-    pollInterval: 5000,
+    pollInterval: 10000,
   });
 
   useEffect(() => {
     onBulkOperationComplete(data, stopPolling);
-  }, [data]);
+  }, [data])
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div>`Error... ${error.message}`</div>
+  }
 
   return (null);
 }
