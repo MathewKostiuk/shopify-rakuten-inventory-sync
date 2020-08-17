@@ -36,8 +36,29 @@ const calculateAvailableDelta = (rakuten_stock, shopify_stock) => {
   return rakuten_stock - shopify_stock;
 }
 
+const sanitizeInput = (string) => {
+  let result = string;
+  const bracketRegex = /\\\(/g;
+  const digitWithPeriodRegex = /(\d{1,2}\.\s?)([A-Z].*)/;
+  if (bracketRegex.test(result)) {
+    result = result.replace(bracketRegex, '(');
+  }
+
+  if (digitWithPeriodRegex.test(result)) {
+    const match = result.match(digitWithPeriodRegex);
+    result = match[2];
+  }
+  return result;
+}
+
+const reverseString = (string) => {
+  return string.split('').reverse().join('');
+}
+
 module.exports = {
   downloadJsonL,
   assignOptionValues,
   calculateAvailableDelta,
+  sanitizeInput,
+  reverseString,
 }

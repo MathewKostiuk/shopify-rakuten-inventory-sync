@@ -23,9 +23,15 @@ export default function BulkOperation(props) {
     }
   }, [called]);
 
-  return (
+  const bulkOperation = called && !loading && (
     <CheckBulkOperationStatus
       onBulkOperationComplete={onBulkOperationComplete}
     />
+  )
+
+  return (
+    <>
+      {bulkOperation}
+    </>
   )
 }
