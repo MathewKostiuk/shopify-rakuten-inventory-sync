@@ -1,5 +1,6 @@
 const readline = require('readline');
 const util = require('util');
+const Products = require('./models/products');
 
 const downloadJsonL = async (url) => {
   const response = await fetch(url);
@@ -80,6 +81,32 @@ const convertDateToShoeSize = (string) => {
   }
 }
 
+const handlePayloadProcessing = (json) => {
+  const filteredJSON = json.filter(obj => {
+    if (obj.inventoryItem && obj.sku) {
+      return obj;
+    }
+  });
+  console.log(`filteredJson length is ${filteredJSON.length}`);
+  
+  const updatedProducts = await Promise.all(filteredJSON.map(async json => {
+    const assigned = assignOptionValues(json);
+    const updated = await Products.updateRakutenProducts(assigned);
+    return [...updated];
+  })).catch(e => console.log(e));
+  console.log(`updatedProducts length is ${updatedProducts.length}`);
+  const filteredProducts = updatedProducts.filter(array => array.length !== 0);
+  const mappedPayload = filteredProducts.map(array => {
+    const payload = {
+      inventoryItemId: array[0].shopify_inventory_item_id,
+      availableDelta: calculateAvailableDelta(array[0].rakuten_stock, array[0].shopify_stock),
+    };
+    return payload;
+  })
+
+  await Products.insertPayload(mappedPayload);
+}
+
 module.exports = {
   downloadJsonL,
   assignOptionValues,
@@ -87,4 +114,5 @@ module.exports = {
   sanitizeInput,
   reverseOnSlash,
   convertDateToShoeSize,
+  handlePayloadProcessing,
 }

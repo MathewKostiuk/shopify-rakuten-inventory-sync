@@ -4,7 +4,6 @@ const fs = require('fs');
 const { sanitizeInput, reverseOnSlash } = require('../utils');
 
 async function insertPayload(payload) {
-  await deleteLastPayload();
   return Promise.all(payload.map(async entry => {
     return await knex ('payloads').insert(entry);
   }));
@@ -142,4 +141,5 @@ module.exports = {
   updateRakutenProducts,
   insertPayload,
   getPayload,
+  deleteLastPayload,
 };

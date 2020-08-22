@@ -8,7 +8,7 @@ const { verifyRequest } = require('@shopify/koa-shopify-auth');
 const session = require('koa-session');
 const koaBody = require('koa-body');
 const Products = require('./models/products');
-const { downloadJsonL, assignOptionValues, calculateAvailableDelta } = require('./utils');
+const { downloadJsonL, handlePayloadProcessing } = require('./utils');
 
 dotenv.config();
 const { default: graphQLProxy } = require('@shopify/koa-shopify-graphql-proxy');
@@ -52,35 +52,15 @@ app.prepare().then(() => {
 
   router.post('/product-info', koaBody(), async (ctx, next) => {
     const parsedJSON = await downloadJsonL(ctx.request.body).catch(e => console.log(e));
+    handlePayloadProcessing(parsedJSON);
     ctx.res.statusCode = 200;
-
-    const filteredJSON = parsedJSON.filter(obj => {
-      if (obj.inventoryItem && obj.sku) {
-        return obj;
-      }
-    });
-    console.log(`filteredJson length is ${filteredJSON.length}`);
-    
-    const updatedProducts = await Promise.all(filteredJSON.map(async json => {
-      const assigned = assignOptionValues(json);
-      const updated = await Products.updateRakutenProducts(assigned);
-      return [...updated];
-    })).catch(e => console.log(e));
-    console.log(`updatedProducts length is ${updatedProducts.length}`);
-    const filteredProducts = updatedProducts.filter(array => array.length !== 0);
-    const mappedPayload = filteredProducts.map(array => {
-      const payload = {
-        inventoryItemId: array[0].shopify_inventory_item_id,
-        availableDelta: calculateAvailableDelta(array[0].rakuten_stock, array[0].shopify_stock),
-      };
-      return payload;
-    })
-
-    await Products.insertPayload(mappedPayload);
+    ctx.body = 'Done';
   });
 
   router.get('/payload', koaBody(), async (ctx, next) => {
+    await Products.deleteLastPayload();
     const payload = await Products.getPayload();
+    console.log(`payload length is ${payload.length}`);
     ctx.res.statusCode = 200;
     ctx.body = payload;
   })
