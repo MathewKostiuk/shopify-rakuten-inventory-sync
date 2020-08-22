@@ -64,7 +64,6 @@ app.prepare().then(() => {
     const updatedProducts = await Promise.all(filteredJSON.map(async json => {
       const assigned = assignOptionValues(json);
       const updated = await Products.updateRakutenProducts(assigned);
-      console.log(updated);
       return [...updated];
     })).catch(e => console.log(e));
     console.log(`updatedProducts length is ${updatedProducts.length}`);

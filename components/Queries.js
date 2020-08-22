@@ -50,7 +50,7 @@ export default function Queries() {
             const brokenDownArray = breakDownArray(json);
             return setProducts(brokenDownArray);
           })
-      }, 20000);
+      }, 120000);
     },
     [],
   );
