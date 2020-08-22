@@ -77,7 +77,6 @@ app.prepare().then(() => {
     })
 
     await Products.insertPayload(mappedPayload);
-
   });
 
   router.get('/payload', koaBody(), async (ctx, next) => {

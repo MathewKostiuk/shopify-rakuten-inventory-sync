@@ -4,9 +4,14 @@ const fs = require('fs');
 const { sanitizeInput, reverseOnSlash } = require('../utils');
 
 async function insertPayload(payload) {
+  await deleteLastPayload();
   return Promise.all(payload.map(async entry => {
     return await knex ('payloads').insert(entry);
   }));
+}
+
+async function deleteLastPayload() {
+  return await knex('payloads').del();
 }
 
 async function getPayload() {
