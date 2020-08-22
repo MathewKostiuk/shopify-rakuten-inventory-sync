@@ -53,19 +53,21 @@ app.prepare().then(() => {
   router.post('/product-info', koaBody(), async (ctx, next) => {
     const parsedJSON = await downloadJsonL(ctx.request.body).catch(e => console.log(e));
     ctx.res.statusCode = 200;
-    
+
     const filteredJSON = parsedJSON.filter(obj => {
       if (obj.inventoryItem && obj.sku) {
         return obj;
       }
     });
+    console.log(`filteredJson length is ${filteredJSON.length}`);
     
     const updatedProducts = await Promise.all(filteredJSON.map(async json => {
       const assigned = assignOptionValues(json);
       const updated = await Products.updateRakutenProducts(assigned);
+      console.log(updated);
       return [...updated];
     })).catch(e => console.log(e));
-
+    console.log(`updatedProducts length is ${updatedProducts.length}`);
     const filteredProducts = updatedProducts.filter(array => array.length !== 0);
     const mappedPayload = filteredProducts.map(array => {
       const payload = {
