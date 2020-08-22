@@ -3,6 +3,16 @@ const csvParser = require('csv-parser');
 const fs = require('fs');
 const { sanitizeInput, reverseOnSlash } = require('../utils');
 
+async function insertPayload(payload) {
+  return Promise.all(payload.map(async entry => {
+    return await knex ('payloads').insert(entry);
+  }));
+}
+
+async function getPayload() {
+  return await knex.select('inventoryItemId', 'availableDelta').from('payloads');
+}
+
 async function insertProducts(products) {
   return Promise.all(products.map(async product => {
     return await knex('rakuten_products').insert({
@@ -113,4 +123,6 @@ module.exports = {
   deleteAllProducts,
   processCSV,
   updateRakutenProducts,
+  insertPayload,
+  getPayload,
 };

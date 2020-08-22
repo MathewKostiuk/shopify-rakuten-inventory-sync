@@ -33,7 +33,7 @@ const assignOptionValues = (json) => {
 }
 
 const calculateAvailableDelta = (rakuten_stock, shopify_stock) => {
-  return rakuten_stock - shopify_stock;
+  return Number(rakuten_stock - shopify_stock);
 }
 
 const sanitizeInput = (string) => {

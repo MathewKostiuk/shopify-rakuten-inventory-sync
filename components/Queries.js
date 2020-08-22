@@ -37,12 +37,20 @@ export default function Queries() {
         mode: 'same-origin',
         body: data.currentBulkOperation.url,
       }
-      fetch(endpoint, options)
-        .then(response => response.json())
-        .then(json => {
-          const brokenDownArray = breakDownArray(json);
-          return setProducts(brokenDownArray);
-        });
+      fetch(endpoint, options);
+      setTimeout(() => {
+        const payloadEndpoint = '/payload';
+        const options = {
+          method: 'GET',
+          mode: 'same-origin',
+        }
+        fetch(payloadEndpoint, options)
+          .then(response => response.json())
+          .then(json => {
+            const brokenDownArray = breakDownArray(json);
+            return setProducts(brokenDownArray);
+          })
+      }, 20000);
     },
     [],
   );

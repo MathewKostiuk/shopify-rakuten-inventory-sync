@@ -52,6 +52,8 @@ app.prepare().then(() => {
 
   router.post('/product-info', koaBody(), async (ctx, next) => {
     const parsedJSON = await downloadJsonL(ctx.request.body).catch(e => console.log(e));
+    ctx.res.statusCode = 200;
+    
     const filteredJSON = parsedJSON.filter(obj => {
       if (obj.inventoryItem && obj.sku) {
         return obj;
@@ -63,6 +65,7 @@ app.prepare().then(() => {
       const updated = await Products.updateRakutenProducts(assigned);
       return [...updated];
     })).catch(e => console.log(e));
+
     const filteredProducts = updatedProducts.filter(array => array.length !== 0);
     const mappedPayload = filteredProducts.map(array => {
       const payload = {
@@ -71,10 +74,16 @@ app.prepare().then(() => {
       };
       return payload;
     })
-    console.log('mappedPayload');
-    ctx.body = mappedPayload;
-    ctx.res.statusCode = 200;
+
+    await Products.insertPayload(mappedPayload);
+
   });
+
+  router.get('/payload', koaBody(), async (ctx, next) => {
+    const payload = await Products.getPayload();
+    ctx.res.statusCode = 200;
+    ctx.body = payload;
+  })
 
   server.use(router.routes());
   server.use(router.allowedMethods());
