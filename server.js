@@ -51,10 +51,7 @@ app.prepare().then(() => {
   });
 
   router.post('/product-info', koaBody(), async (ctx, next) => {
-    ctx.request.socket.setTimeout(5 * 60 * 1000); 
-    console.log('begin');
     const parsedJSON = await downloadJsonL(ctx.request.body).catch(e => console.log(e));
-    console.log('parsedJSON');
     const filteredJSON = parsedJSON.filter(obj => {
       if (obj.inventoryItem && obj.sku) {
         return obj;
@@ -66,9 +63,7 @@ app.prepare().then(() => {
       const updated = await Products.updateRakutenProducts(assigned);
       return [...updated];
     })).catch(e => console.log(e));
-    console.log('updatedProducts');
     const filteredProducts = updatedProducts.filter(array => array.length !== 0);
-    console.log('filteredProducts');
     const mappedPayload = filteredProducts.map(array => {
       const payload = {
         inventoryItemId: array[0].shopify_inventory_item_id,
