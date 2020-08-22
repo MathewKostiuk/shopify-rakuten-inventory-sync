@@ -63,7 +63,7 @@ app.prepare().then(() => {
       const assigned = assignOptionValues(json);
       const updated = await Products.updateRakutenProducts(assigned);
       return [...updated];
-    }));
+    })).catch(e => console.log(e));
     const filteredProducts = updatedProducts.filter(array => array.length !== 0);
     const mappedPayload = filteredProducts.map(array => {
       const payload = {

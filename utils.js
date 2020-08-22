@@ -46,7 +46,6 @@ const sanitizeInput = (string) => {
 
   if (digitWithPeriodRegex.test(result)) {
     const match = result.match(digitWithPeriodRegex);
-    console.log(match);
     result = match[3];
   }
 
