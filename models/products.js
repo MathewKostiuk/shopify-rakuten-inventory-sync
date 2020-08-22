@@ -76,9 +76,7 @@ async function fetchWithThreeFields(json) {
     rakuten_id: json.rakuten_id,
     option_1: json.option_1,
     option_2: json.option_2 || '',
-  })
-  .whereNull('shopify_inventory_item_id')
-  .catch(e => console.log(e, json));
+  }).catch(e => console.log(e, json));
 }
 
 async function fetchWithThreeFieldsSwitched(json) {
@@ -86,26 +84,20 @@ async function fetchWithThreeFieldsSwitched(json) {
     rakuten_id: json.rakuten_id,
     option_1: json.option_2,
     option_2: json.option_1 || '',
-  })
-  .whereNull('shopify_inventory_item_id')
-  .catch(e => console.log(e, json));
+  }).catch(e => console.log(e, json));
 }
 
 async function fetchWithTwoFields(json) {
   return await knex('rakuten_products').where({
     rakuten_id: json.rakuten_id,
-  })
-  .whereNull('shopify_inventory_item_id')
-  .andWhere('option_1', 'like', `${json.option_1.substring(0, 3)}%`)
+  }).andWhere('option_1', 'like', `${json.option_1.substring(0, 3)}%`)
   .catch(e => console.log(e, json));
 }
 
 async function fetchWithOneField(json) {
   return await knex('rakuten_products').where({
     rakuten_id: json.rakuten_id,
-  })
-  .whereNull('shopify_inventory_item_id')
-  .catch(e => console.log(e, json));
+  }).catch(e => console.log(e, json));
 }
 
 async function reversedOptionOne(json) {
@@ -113,9 +105,7 @@ async function reversedOptionOne(json) {
   return await knex('rakuten_products').where({
     rakuten_id: json.rakuten_id,
     option_1: reversed || '',
-  })
-  .whereNull('shopify_inventory_item_id')
-  .catch(e => console.log(e, json));
+  }).catch(e => console.log(e, json));
 }
 
 module.exports = {
