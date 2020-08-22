@@ -51,6 +51,7 @@ app.prepare().then(() => {
   });
 
   router.post('/product-info', koaBody(), async (ctx, next) => {
+    ctx.request.socket.setTimeout(5 * 60 * 1000); 
     console.log('begin');
     const parsedJSON = await downloadJsonL(ctx.request.body).catch(e => console.log(e));
     console.log('parsedJSON');
