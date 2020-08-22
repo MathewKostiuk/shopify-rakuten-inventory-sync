@@ -1,6 +1,7 @@
 const knex = require('../db/index');
 const csvParser = require('csv-parser');
 const fs = require('fs');
+const { assignOptionValues, calculateAvailableDelta } = require('../utils');
 const { sanitizeInput, reverseOnSlash } = require('../utils');
 
 async function insertPayload(payload) {
@@ -134,6 +135,32 @@ async function reversedOptionOne(json) {
   .catch(e => console.log(e, json));
 }
 
+const handlePayloadProcessing = async (json) => {
+  const filteredJSON = json.filter(obj => {
+    if (obj.inventoryItem && obj.sku) {
+      return obj;
+    }
+  });
+  console.log(`filteredJson length is ${filteredJSON.length}`);
+  
+  const updatedProducts = await Promise.all(filteredJSON.map(async json => {
+    const assigned = assignOptionValues(json);
+    const updated = await updateRakutenProducts(assigned);
+    return [...updated];
+  })).catch(e => console.log(e));
+  console.log(`updatedProducts length is ${updatedProducts.length}`);
+  const filteredProducts = updatedProducts.filter(array => array.length !== 0);
+  const mappedPayload = filteredProducts.map(array => {
+    const payload = {
+      inventoryItemId: array[0].shopify_inventory_item_id,
+      availableDelta: calculateAvailableDelta(array[0].rakuten_stock, array[0].shopify_stock),
+    };
+    return payload;
+  })
+
+  await insertPayload(mappedPayload);
+}
+
 module.exports = {
   insertProducts,
   deleteAllProducts,
@@ -142,4 +169,5 @@ module.exports = {
   insertPayload,
   getPayload,
   deleteLastPayload,
+  handlePayloadProcessing
 };
