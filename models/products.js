@@ -142,14 +142,12 @@ const handlePayloadProcessing = async (json) => {
       return obj;
     }
   });
-  console.log(`filteredJson length is ${filteredJSON.length}`);
 
   const updatedProducts = await Promise.all(filteredJSON.map(async json => {
     const assigned = assignOptionValues(json);
     const updated = await updateRakutenProducts(assigned);
     return [...updated];
   })).catch(e => console.log(e));
-  console.log(`updatedProducts length is ${updatedProducts.length}`);
 }
 
 module.exports = {

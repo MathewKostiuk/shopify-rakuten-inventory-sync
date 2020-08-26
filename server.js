@@ -59,8 +59,6 @@ app.prepare().then(() => {
 
   router.get('/products/payload', koaBody(), async (ctx, next) => {
     const payload = await Products.getPayload();
-    console.log(`payload length is ${payload.rows.length}`);
-    console.log(payload.rows);
     ctx.res.statusCode = 200;
     ctx.body = payload.rows.map(row => {
       return {
