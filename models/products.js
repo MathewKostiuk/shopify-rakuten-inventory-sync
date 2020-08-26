@@ -6,7 +6,7 @@ const { sanitizeInput, reverseOnSlash } = require('../utils');
 
 async function getPayload() {
   return await knex.raw(`
-    SELECT shopify_inventory_item_id AS inventoryItemId, available_delta AS availableDelta
+    SELECT shopify_inventory_item_id, available_delta
 	  FROM rakuten_products
 	  WHERE 
      shopify_inventory_item_id IS NOT NULL

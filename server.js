@@ -62,7 +62,12 @@ app.prepare().then(() => {
     console.log(`payload length is ${payload.rows.length}`);
     console.log(payload.rows);
     ctx.res.statusCode = 200;
-    ctx.body = payload.rows;
+    ctx.body = payload.rows.map(row => {
+      return {
+        inventoryItemId: row.shopify_inventory_item_id,
+        availableDelta: row.available_delta,
+      }
+    });
   })
 
   server.use(router.routes());
