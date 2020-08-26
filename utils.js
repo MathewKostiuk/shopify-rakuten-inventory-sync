@@ -1,6 +1,4 @@
 const readline = require('readline');
-const util = require('util');
-const Products = require('./models/products');
 
 const downloadJsonL = async (url) => {
   const response = await fetch(url);
@@ -52,7 +50,8 @@ const sanitizeInput = (string) => {
 
   result = convertDateToShoeSize(result);
 
-  return result.trim();
+
+  return !!result ? result.trim() : '';
 }
 
 const reverseOnSlash = (string) => {

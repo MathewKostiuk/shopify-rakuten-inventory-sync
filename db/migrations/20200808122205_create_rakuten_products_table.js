@@ -8,6 +8,7 @@ exports.up = knex => {
     table.integer('rakuten_stock');
     table.integer('shopify_stock');
     table.string('shopify_inventory_item_id');
+    table.integer('available_delta');
   })
 }
 

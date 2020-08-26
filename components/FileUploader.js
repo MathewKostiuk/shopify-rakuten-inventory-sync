@@ -27,7 +27,7 @@ export default function FileUploader(props) {
   const handleCSVUpload = useCallback(async () => {
     const data = new FormData()
     data.append('csv', files[0]);
-    const endpoint = `/csv`;
+    const endpoint = `/products/csv`;
     const options = {
       method: 'POST',
       mode: 'same-origin',

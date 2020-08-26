@@ -31,7 +31,7 @@ export default function Queries() {
       }
 
       stopPolling();
-      const endpoint = `/product-info`;
+      const endpoint = `/products/product-info`;
       const options = {
         method: 'POST',
         mode: 'same-origin',
@@ -39,7 +39,7 @@ export default function Queries() {
       }
       fetch(endpoint, options);
       setTimeout(() => {
-        const payloadEndpoint = '/payload';
+        const payloadEndpoint = '/products/payload';
         const options = {
           method: 'GET',
           mode: 'same-origin',

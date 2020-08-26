@@ -44,25 +44,25 @@ app.prepare().then(() => {
     }),
   );
 
-  router.post('/csv', koaBody({ multipart: true, formLimit: 400000 }), async (ctx, next) => {
+  router.post('/products/csv', koaBody({ multipart: true, formLimit: 400000 }), async (ctx, next) => {
     ctx.body = ctx.request.files.csv.path;
     await Products.processCSV(ctx.body);
     ctx.res.statusCode = 200;
   });
 
-  router.post('/product-info', koaBody(), async (ctx, next) => {
+  router.post('/products/product-info', koaBody(), async (ctx, next) => {
     const parsedJSON = await downloadJsonL(ctx.request.body).catch(e => console.log(e));
-    await Products.deleteLastPayload();
     Products.handlePayloadProcessing(parsedJSON);
     ctx.res.statusCode = 200;
     ctx.body = 'Done';
   });
 
-  router.get('/payload', koaBody(), async (ctx, next) => {
+  router.get('/products/payload', koaBody(), async (ctx, next) => {
     const payload = await Products.getPayload();
-    console.log(`payload length is ${payload.length}`);
+    console.log(`payload length is ${payload.rows.length}`);
+    console.log(payload.rows);
     ctx.res.statusCode = 200;
-    ctx.body = payload;
+    ctx.body = payload.rows;
   })
 
   server.use(router.routes());
