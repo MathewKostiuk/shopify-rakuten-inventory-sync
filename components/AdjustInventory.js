@@ -5,9 +5,9 @@ import { useMutation } from '@apollo/client';
 
 export default function AdjustInventory(props) {
   const locationId = 'gid://shopify/Location/47667675295';
-  const { inventoryItemAdjustments } = props;
+  const { inventoryItemAdjustments, setUpdatedProducts } = props;
 
-  const [adjustInventoryMutation, { data }] = useMutation(BULK_INVENTORY_ADJUSTMENT, {
+  const [adjustInventoryMutation, { data, called }] = useMutation(BULK_INVENTORY_ADJUSTMENT, {
     variables: {
       inventoryItemAdjustments,
       locationId,
@@ -15,8 +15,14 @@ export default function AdjustInventory(props) {
   });
 
   useEffect(() => {
-    adjustInventoryMutation();
-  }, []);
+    if (!called) {
+      adjustInventoryMutation();
+    }
+    
+    if (data.inventoryBulkAdjustQuantityAtLocation.inventoryLevels.length > 0) {
+      setUpdatedProducts((previousState) => [...previousState, data.inventoryBulkAdjustQuantityAtLocation.inventoryLevels]);
+    }
+  }, [data]);
 
   return (null);
 }

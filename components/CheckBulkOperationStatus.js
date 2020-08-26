@@ -10,8 +10,6 @@ export default function CheckBulkOperationStatus(props) {
 
   const {
     data,
-    loading,
-    error,
     stopPolling,
   } = useQuery(CHECK_BULK_OPERATION, {
     pollInterval: 10000,
@@ -20,14 +18,6 @@ export default function CheckBulkOperationStatus(props) {
   useEffect(() => {
     onBulkOperationComplete(data, stopPolling);
   }, [data])
-
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
-  if (error) {
-    return <div>`Error... ${error.message}`</div>
-  }
 
   return (null);
 }

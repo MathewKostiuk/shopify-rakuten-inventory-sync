@@ -1,11 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
 import BulkOperation from './BulkOperation';
 import AdjustInventory from './AdjustInventory';
 import { BULK_OPERATION_PRODUCT_INFO } from '../queries';
 
-export default function Queries() {
-  const [products, setProducts] = useState([]);
+export default function Queries(props) {
+  const { setFetched } = props;
+  const [productsToUpdate, setProductsToUpdate] = useState([]);
+  const [updatedProducts, setUpdatedProducts] = useState([]);
+  const [updatingInventory, setUpdatingInventory] = useState(false);
 
   const breakDownArray = (array) => {
     const numberOfArraysNeeded = Math.ceil((array.length / 100));
@@ -48,30 +51,43 @@ export default function Queries() {
           .then(response => response.json())
           .then(json => {
             const brokenDownArray = breakDownArray(json);
-            return setProducts(brokenDownArray);
+            if (brokenDownArray.length > 0) {
+              setProductsToUpdate(brokenDownArray);
+              setUpdatingInventory(true);
+            } else {
+              setFetched(false);
+            }
           })
-      }, 60000);
+      }, 75000);
     },
     [],
   );
 
-  const productBulkOperation = products.length === 0 && (
+  const productBulkOperation = productsToUpdate.length === 0 && (
     <BulkOperation
       mutation={BULK_OPERATION_PRODUCT_INFO}
       onBulkOperationComplete={onProductBulkActionComplete}
     />
   );
 
-  const adjustInventory = products.length > 0 && (
+  const adjustInventory = productsToUpdate.length > 0 && (
     <>
-      {products.map((batch, index) => {
+      {productsToUpdate.map((batch, index) => {
         return <AdjustInventory
           inventoryItemAdjustments={batch}
+          setUpdatedProducts={setUpdatedProducts}
           key={index}
         />
       })}
     </>
   );
+
+  useEffect(() => {
+    if (updatingInventory && updatedProducts.length === productsToUpdate.length) {
+      setFetched(false);
+      setUpdatingInventory(false);
+    }
+  }, [updatedProducts]);
 
   return (
     <>

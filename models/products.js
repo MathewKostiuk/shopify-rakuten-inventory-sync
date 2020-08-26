@@ -1,8 +1,12 @@
 const knex = require('../db/index');
 const csvParser = require('csv-parser');
 const fs = require('fs');
-const { assignOptionValues, calculateAvailableDelta } = require('../utils');
-const { sanitizeInput, reverseOnSlash } = require('../utils');
+const {
+  assignOptionValues,
+  calculateAvailableDelta,
+  sanitizeInput,
+  reverseOnSlash
+} = require('../utils');
 
 async function getPayload() {
   return await knex.raw(`
