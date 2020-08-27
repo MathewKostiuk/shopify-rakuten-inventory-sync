@@ -5,7 +5,7 @@ import AdjustInventory from './AdjustInventory';
 import { BULK_OPERATION_PRODUCT_INFO } from '../queries';
 
 export default function Queries(props) {
-  const { setFetched } = props;
+  const { setFetched, setCompleted } = props;
   const [productsToUpdate, setProductsToUpdate] = useState([]);
   const [updatedProducts, setUpdatedProducts] = useState([]);
   const [updatingInventory, setUpdatingInventory] = useState(false);
@@ -86,6 +86,7 @@ export default function Queries(props) {
     if (updatingInventory && updatedProducts.length === productsToUpdate.length) {
       setFetched(false);
       setUpdatingInventory(false);
+      setCompleted(true);
     }
   }, [updatedProducts]);
 

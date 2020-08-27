@@ -61,6 +61,11 @@ async function updateRakutenProducts(rakutenJSON) {
     return await updateByID(twoOptionMatch[0].id, rakutenJSON);
   }
 
+  const twoOptionMatchFuzzy = await fetchWithTwoFieldsFuzzy(rakutenJSON);
+  if (twoOptionMatchFuzzy.length === 1) {
+    return await updateByID(twoOptionMatchFuzzy[0].id, rakutenJSON);
+  }
+
   const oneOptionMatch = await fetchWithOneField(rakutenJSON);
   if (oneOptionMatch.length === 1) {
     return await updateByID(oneOptionMatch[0].id, rakutenJSON);
@@ -114,6 +119,15 @@ async function fetchWithThreeFieldsSwitched(json) {
 }
 
 async function fetchWithTwoFields(json) {
+  return await knex('rakuten_products').where({
+    rakuten_id: json.rakuten_id,
+  })
+    .whereNull('shopify_inventory_item_id')
+    .andWhere('option_1', json.option_1)
+    .catch(e => console.log(e, json));
+}
+
+async function fetchWithTwoFieldsFuzzy(json) {
   return await knex('rakuten_products').where({
     rakuten_id: json.rakuten_id,
   })

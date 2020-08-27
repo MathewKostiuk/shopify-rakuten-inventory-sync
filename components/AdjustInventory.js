@@ -19,7 +19,7 @@ export default function AdjustInventory(props) {
       adjustInventoryMutation();
     }
     
-    if (data.inventoryBulkAdjustQuantityAtLocation.inventoryLevels.length > 0) {
+    if (data && data.inventoryBulkAdjustQuantityAtLocation && data.inventoryBulkAdjustQuantityAtLocation.inventoryLevels.length > 0) {
       setUpdatedProducts((previousState) => [...previousState, data.inventoryBulkAdjustQuantityAtLocation.inventoryLevels]);
     }
   }, [data]);

@@ -5,22 +5,36 @@ import Queries from './Queries';
 
 import {
   Spinner,
+  Banner,
 } from '@shopify/polaris';
 
 export default function UpdateInventory() {
   const [fetched, setFetched] = useState(false);
+  const [completed, setCompleted] = useState(false);
+
+  const uploader = !completed && (
+    <FileUploader setFetched={setFetched} />
+  );
 
   const queries = fetched && (
     <>
-      <Queries setFetched={setFetched} />
+      <Queries setFetched={setFetched} setCompleted={setCompleted} />
       <Spinner accessibilityLabel="Inventory is processing..." size="large" color="teal" />
     </>
   );
 
+  const successBanner = completed && (
+    <Banner
+      title="The stock was successfully updated!"
+      status="success"
+    />
+  );
+
   return (
     <React.Fragment>
-      <FileUploader setFetched={setFetched} />
+      {uploader}
       {queries}
+      {successBanner}
     </React.Fragment>
   )
 }
