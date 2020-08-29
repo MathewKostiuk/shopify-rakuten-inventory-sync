@@ -11,9 +11,7 @@ export default function BulkOperation(props) {
   } = props;
 
   const [bulkOperationQuery, {
-    data,
     loading,
-    error,
     called,
   }] = useMutation(mutation);
 

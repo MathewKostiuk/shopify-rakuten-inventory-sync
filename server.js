@@ -68,6 +68,14 @@ app.prepare().then(() => {
     });
   })
 
+  router.get('/products/not-updated', koaBody(), async (ctx, next) => {
+    ctx.res.statusCode = 200;
+    const response = await Products.getNotUpdated();
+    ctx.body = response.map(entry => {
+      return [entry.rakuten_id, entry.option_1, entry.option_2, entry.rakuten_stock];
+    })
+  })
+
   server.use(router.routes());
   server.use(router.allowedMethods());
   

@@ -54,8 +54,10 @@ export default function Queries(props) {
             if (brokenDownArray.length > 0) {
               setProductsToUpdate(brokenDownArray);
               setUpdatingInventory(true);
+              setCompleted();
             } else {
               setFetched(false);
+              setCompleted();
             }
           })
       }, 75000);
@@ -86,7 +88,6 @@ export default function Queries(props) {
     if (updatingInventory && updatedProducts.length === productsToUpdate.length) {
       setFetched(false);
       setUpdatingInventory(false);
-      setCompleted(true);
     }
   }, [updatedProducts]);
 

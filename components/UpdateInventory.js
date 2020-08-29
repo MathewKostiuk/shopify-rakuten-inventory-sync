@@ -8,9 +8,9 @@ import {
   Banner,
 } from '@shopify/polaris';
 
-export default function UpdateInventory() {
+export default function UpdateInventory(props) {
   const [fetched, setFetched] = useState(false);
-  const [completed, setCompleted] = useState(false);
+  const { completed, setCompleted } = props;
 
   const uploader = !completed && (
     <FileUploader setFetched={setFetched} />

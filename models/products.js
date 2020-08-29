@@ -19,6 +19,10 @@ async function getPayload() {
   `)
 }
 
+async function getNotUpdated() {
+  return await knex.select('rakuten_id', 'option_1', 'option_2', 'rakuten_stock').from('rakuten_products').whereNull('shopify_inventory_item_id').orderBy('rakuten_id');
+}
+
 async function insertProducts(products) {
   return Promise.all(products.map(async product => {
     return await knex('rakuten_products').insert({
@@ -174,5 +178,6 @@ module.exports = {
   processCSV,
   updateRakutenProducts,
   getPayload,
-  handlePayloadProcessing
+  handlePayloadProcessing,
+  getNotUpdated,
 };
