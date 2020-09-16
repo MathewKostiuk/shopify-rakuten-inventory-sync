@@ -80,7 +80,6 @@ export default function FileUploader(props) {
     <Stack vertical>
       {errorMessage}
       <DropZone
-        accept="text/csv"
         allowMultiple={false}
         errorOverlayText="File type must be .csv"
         onDrop={handleDropZoneDrop}
