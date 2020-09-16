@@ -4,23 +4,27 @@ import FileUploader from './FileUploader';
 import Queries from './Queries';
 
 import {
-  Spinner,
   Banner,
 } from '@shopify/polaris';
 
 export default function UpdateInventory(props) {
   const [fetched, setFetched] = useState(false);
-  const { completed, setCompleted } = props;
+  const { completed, setCompleted, updateProgress } = props;
 
   const uploader = !completed && (
-    <FileUploader setFetched={setFetched} />
+    <FileUploader
+      fetched={fetched}
+      setFetched={setFetched}
+      updateProgress={updateProgress}
+    />
   );
 
   const queries = fetched && (
-    <>
-      <Queries setFetched={setFetched} setCompleted={setCompleted} />
-      <Spinner accessibilityLabel="Inventory is processing..." size="large" color="teal" />
-    </>
+    <Queries
+      setFetched={setFetched}
+      setCompleted={setCompleted}
+      updateProgress={updateProgress}
+    />
   );
 
   const successBanner = completed && (

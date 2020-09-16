@@ -2,6 +2,7 @@ import {
   Card,
   Layout,
   Page,
+  ProgressBar,
   Stack,
   TextContainer,
 } from '@shopify/polaris';
@@ -14,7 +15,16 @@ class FileUpload extends React.Component {
     this.state = {
       completed: false,
       notUpdated: [],
+      progress: 0,
     }
+
+    this.updateProgress = this.updateProgress.bind(this);
+  }
+
+  updateProgress(currentProgress) {
+    this.setState({
+      progress: currentProgress,
+    });
   }
 
   setCompleted() {
@@ -53,14 +63,21 @@ class FileUpload extends React.Component {
                 <Stack.Item>
                   <UpdateInventory
                     completed={this.state.completed}
-                    setCompleted={() => this.setCompleted()} />
+                    setCompleted={() => this.setCompleted()}
+                    updateProgress={this.updateProgress}
+                    />
                 </Stack.Item>
               </Stack>
+              <Card.Section>
+                {this.state.progress > 0 && this.state.progress !== 100 && 
+                  <ProgressBar size="small" progress={this.state.progress} />
+                }
+              </Card.Section>
             </Card>
           </Layout.Section>
-          {this.state.completed && this.state.notUpdated.length > 0 && (
+          {this.state.completed && this.state.notUpdated.length > 0 && 
             <Summary notUpdated={this.state.notUpdated} />
-          )}
+          }
         </Layout>
       </Page>
     )

@@ -5,7 +5,7 @@ import AdjustInventory from './AdjustInventory';
 import { BULK_OPERATION_PRODUCT_INFO } from '../queries';
 
 export default function Queries(props) {
-  const { setFetched, setCompleted } = props;
+  const { setFetched, setCompleted, updateProgress } = props;
   const [productsToUpdate, setProductsToUpdate] = useState([]);
   const [updatedProducts, setUpdatedProducts] = useState([]);
   const [updatingInventory, setUpdatingInventory] = useState(false);
@@ -34,6 +34,7 @@ export default function Queries(props) {
       }
 
       stopPolling();
+      updateProgress(50)
       const endpoint = `/products/product-info`;
       const options = {
         method: 'POST',
@@ -50,14 +51,17 @@ export default function Queries(props) {
         fetch(payloadEndpoint, options)
           .then(response => response.json())
           .then(json => {
+            updateProgress(75);
             const brokenDownArray = breakDownArray(json);
             if (brokenDownArray.length > 0) {
               setProductsToUpdate(brokenDownArray);
               setUpdatingInventory(true);
               setCompleted();
+              updateProgress(100);
             } else {
               setFetched(false);
               setCompleted();
+              updateProgress(100);
             }
           })
       }, 75000);

@@ -8,10 +8,11 @@ import {
   List,
   Banner,
   Button,
+  Spinner,
 } from '@shopify/polaris';
 
 export default function FileUploader(props) {
-  const { setFetched } = props;
+  const { setFetched, updateProgress, fetched } = props;
   const imageURL = 'https://cdn.shopify.com/s/files/1/0757/9955/files/New_Post.png?12678548500147524304';
   const [files, setFiles] = React.useState([]);
   const [rejectedFiles, setRejectedFiles] = React.useState([]);
@@ -25,6 +26,7 @@ export default function FileUploader(props) {
   );
 
   const handleCSVUpload = useCallback(async () => {
+    updateProgress(5);
     const data = new FormData()
     data.append('csv', files[0]);
     const endpoint = `/products/csv`;
@@ -35,6 +37,7 @@ export default function FileUploader(props) {
     }
     await fetch(endpoint, options);
     setFetched(() => true);
+    updateProgress(10);
   },
     [files],
   );
@@ -88,14 +91,19 @@ export default function FileUploader(props) {
         {fileUpload}
         {uploadedFiles}
       </DropZone>
-      <Stack.Item>
-        {files.length > 0 &&
-          <Button
-            primary
-            onClick={handleCSVUpload} >
-            Update Inventory
+      <Stack.Item fill>
+        <Stack>
+          {files.length > 0 &&
+            <Button
+              primary
+              onClick={handleCSVUpload} >
+              Update Inventory
           </Button>
-        }
+          }
+          {fetched &&
+            <Spinner accessibilityLabel="Inventory is processing..." size="large" color="teal" />
+          }
+        </Stack>
       </Stack.Item>
     </Stack>
   );
