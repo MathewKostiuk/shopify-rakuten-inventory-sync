@@ -46,7 +46,7 @@ class FileUpload extends React.Component {
                 <Stack.Item fill>
                   <TextContainer>
                     <p>
-                      Once you have added the CSV file, click on the 'Process CSV' button.
+                      Once you have added the CSV file, click on the 'Update Inventory' button.
                     </p>
                   </TextContainer>
                 </Stack.Item>
